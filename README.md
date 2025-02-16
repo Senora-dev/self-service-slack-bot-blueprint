@@ -1,4 +1,4 @@
-# 🤖 Self-Service Slack Bot
+# 🤖 Self-Service Slack Bot Blueprint
 
 ![Architecture](assets/architecture.png)  
 

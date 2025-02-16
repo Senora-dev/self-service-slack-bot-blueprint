@@ -1,0 +1,19 @@
+[
+    {
+        "type": "header",
+        "block_id": "example_block_id",
+        "text": {
+            "type": "plain_text",
+            "text": "Example Self-Service Action"
+        }
+    },
+    {
+        "type": "input",
+        "block_id": "example_block",
+        "element": {
+            "type": "plain_text_input",
+            "action_id": "example_input"
+        },
+        "label": {"type": "plain_text", "text": "Example"}
+    }
+]

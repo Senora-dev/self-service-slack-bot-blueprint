@@ -1,0 +1,23 @@
+version: 0.2
+
+phases:
+  install:
+    commands:
+      - echo "Installing dependencies..."
+  build:
+    commands:
+      - echo "Running the self-service action..."
+  post_build:
+    commands:
+      - echo "Sending event to Notifier Lambda..."
+      - DM_CHANNEL=$(echo "$REQUEST_BODY" | jq -r '.user.id') || { echo "Failed to parse user.id"; exit 1; }
+      - MESSAGE="The process is done."
+      - |
+        EVENT_PAYLOAD=$(jq -n \
+          --arg type "direct-message" \
+          --arg user_id "$DM_CHANNEL" \
+          --arg message "$MESSAGE" \
+          '{type: $type, user_id: $user_id, message: $message}')
+      - aws lambda invoke --function-name NotifierFunction --payload "$EVENT_PAYLOAD" --cli-binary-format raw-in-base64-out output.json || { echo "Lambda invocation failed"; cat output.json; exit 1; }
+      - echo "Notifier response:"
+      - cat output.json

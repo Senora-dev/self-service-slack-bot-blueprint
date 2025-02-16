@@ -1,0 +1,2 @@
+slack_sdk==3.11.1
+aws-lambda-powertools==2.39.1

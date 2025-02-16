@@ -1,0 +1,77 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: 
+  - AWS::Serverless-2016-10-31
+
+Globals:
+  Function:
+    Environment:
+      Variables:
+        POWERTOOLS_SERVICE_NAME: slack-bot
+        POWERTOOLS_LOG_LEVEL: INFO
+
+Parameters:
+  BotName:
+    Type: String
+    Description: "The Slack-Bot name will be used as a prefix in resource names."
+
+Resources:
+  SlackSecretToken:
+    Type: 'AWS::SecretsManager::Secret'
+    Properties:
+      Name: !Sub '/${BotName}/slack-secret-token'
+
+  SlackBotFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: SlackBotFunction
+      Handler: main.lambda_handler
+      Runtime: python3.11
+      CodeUri: src/slack_bot
+      Environment:
+        Variables:
+          SLACK_SECRET_TOKEN: !Ref SlackSecretToken
+      Policies: 
+        - AWSSecretsManagerGetSecretValuePolicy:
+            SecretArn: !Ref SlackSecretToken
+        - Statement:
+            - Effect: Allow
+              Action: codebuild:StartBuild
+              Resource: "*"
+      Events:
+            SlackBotApi:
+              Type: Api
+              Properties:
+                Path: /slack
+                Method: post
+
+  NotifierQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub '${BotName}-notifier-sqs'
+
+  NotifierFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: NotifierFunction
+      Handler: main.lambda_handler
+      Runtime: python3.11
+      CodeUri: src/slack_notifier
+      Environment:
+        Variables:
+          SLACK_SECRET_TOKEN: !Ref SlackSecretToken
+      Policies: 
+        - AWSSecretsManagerGetSecretValuePolicy:
+            SecretArn: !Ref SlackSecretToken
+        - SQSPollerPolicy:
+            QueueName: !Ref NotifierQueue
+
+Outputs:
+  SlackBotApiUrl:
+    Description: "API Gateway endpoint URL for Slack bot"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/slack"
+
+  NotifierQueueArn:
+    Description: 'ARN of the Notifier SQS Queue'
+    Value: !Ref NotifierQueue
+    Export:
+      Name: NotifierQueueArn

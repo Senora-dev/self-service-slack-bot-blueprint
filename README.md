@@ -1,4 +1,4 @@
-# 🤖 Self-Service Slack Bot Blueprint
+# 🤖 Self-Service Slack Bot
 
 ![Architecture](assets/architecture.png)  
 
@@ -59,21 +59,28 @@ This project consists of three main components:
 - Modify `modal.json` to change the form fields.
 - Update `buildspec.yaml` to adjust the backend logic.
 
-For more details on modals, check the [Slack Block Kit Builder](https://api.slack.com/tools/block-kit-builder).
+For more details on modals, check the [Slack Block Kit Builder](https://app.slack.com/block-kit-builder).
 
 ---
 
 ## 📦 Deployment
 
-- Run the following command to deploy the bot and infrastructure:  
+1. Run the following command to deploy the bot and infrastructure:  
   ```sh
   make all
   ```
-  This will:
+  This command will:
 
  - Deploy the CloudFormation stack (including the bot function and notifier function).
  - Create the AWS CodeBuild projects ("Runners") using Terraform.
-
+2. Set the API Gateway URL in the [Slash Command URL](https://api.slack.com/apps/A08769JU3HB/slash-commands?) & [Interactivity Request URL](https://api.slack.com/apps/A08769JU3HB/interactive-messages?) fields in the Slack App management console.
+3. Fill the secret that has been created (```/${BotName}/slack-secret-token```) with the value:
+```json
+{
+   "slack_signing_secret":"[PUT_HERE_SECRET]",
+   "slack_bot_token":"[PUT_HERE_TOKEN]"
+   }
+```
 ---
 
 ## 🤝 Contributing

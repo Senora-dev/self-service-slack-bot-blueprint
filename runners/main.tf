@@ -1,8 +1,11 @@
 locals {
-  # List only directories from the actions_path
-  directories = [for dir in fileset("${path.module}/${var.actions_path}", "*") : basename(dir) if can(file("${path.module}/${var.actions_path}/${dir}/buildspec.yaml"))]
+  all_entries = fileset("${path.module}/${var.actions_path}", "**")
 
-  # Create the action data for each directory
+  directories = distinct([
+    for entry in local.all_entries :
+    split("/", entry)[0] 
+  ])
+
   action_data = {
     for dir_name in local.directories : dir_name => {
       action_name        = dir_name
@@ -10,6 +13,7 @@ locals {
     }
   }
 }
+
 
 resource "aws_codebuild_project" "actions" {
   for_each = local.action_data

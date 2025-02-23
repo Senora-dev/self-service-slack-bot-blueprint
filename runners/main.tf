@@ -21,7 +21,7 @@ resource "aws_codebuild_project" "actions" {
   name = "${var.bot_name}-${each.value.action_name}"
 
   source {
-    type     = "S3"
+    type     = "NO_SOURCE"
     buildspec = file(each.value.action_source_file)
   }
 

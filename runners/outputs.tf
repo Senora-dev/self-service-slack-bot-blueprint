@@ -6,3 +6,7 @@ output "codebuild_project_names" {
 output "directories"{
   value = local.directories
 }
+
+output "actions_path"{
+  value = var.actions_path
+}

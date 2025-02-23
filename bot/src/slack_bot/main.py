@@ -37,25 +37,15 @@ def open_modal(ack, body, client):
 
 @app.view("initial_modal")
 def handle_initial_modal_submission(ack, body, client, logger):
-    
-    # Extract the selected value safely
+    print("Body:")
+    print(body)
+    # Extract the selected value
     values = body.get("view", {}).get("state", {}).get("values", {})
     action_name = next(iter(values)).replace("_block","") 
-    choice_block_key = action_name+"_block"
-    choice_block = values.get(choice_block_key, {})
-    choice_action = choice_block.get("initial_choice_action", {})
-    if "selected_option" in choice_action:
-        selected_option = choice_action["selected_option"]["value"]
-    else:
-        logger.error("No selected option found in initial_choice_action")
-        return
+    selected_option_value = values['action_selection']['initial_choice_action']['selected_option']['value']
+    
     callback_id = "updated_modal"
-    #if selected_option == "example":
-    #    blocks = action_data['example']
-    blocks = action_data[selected_option]
-
-    logger.info("blocks:")
-    logger.info(blocks)
+    blocks = action_data[selected_option_value]
 
     new_view = {
         "type": "modal",

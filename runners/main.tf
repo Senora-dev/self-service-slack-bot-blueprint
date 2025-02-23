@@ -18,7 +18,7 @@ locals {
 resource "aws_codebuild_project" "actions" {
   for_each = local.action_data
 
-  name = "${var.bot_name}-${each.value.action_name}"
+  name = "${each.value.action_name}"
 
   source {
     type     = "NO_SOURCE"

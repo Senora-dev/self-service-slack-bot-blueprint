@@ -1,6 +1,6 @@
 # 🤖 Self-Service Slack Bot Blueprint
 
-![Architecture](assets/architecture.png)  
+![Architecture](architecture.png)  
 
 This project enables you to create and extend a Slack bot with custom actions using AWS services.  
 It allows you to add actions easily by simply creating a folder in the `actions` directory.  

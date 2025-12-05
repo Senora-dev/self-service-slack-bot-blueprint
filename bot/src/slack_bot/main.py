@@ -21,7 +21,7 @@ app = App(
 
 app.use(RequestVerification(signing_secret=SLACK_TOKENS["slack_signing_secret"]))
 
-@app.command("/senora")
+@app.command("/menu")
 def open_modal(ack, body, client):
     trigger_id = body["trigger_id"]
     modal_view = {
@@ -76,7 +76,7 @@ def handle_updated_modal_submission(ack, body, client, logger):
     except Exception as err:
         logger.error(err)
         user_id = body['user']['id']
-        response_message = "There is an error :( please contact your amazing DevOps team."
+        response_message = "There is an error :( please contact your amazing DevOps team or create a ticket for Senora.dev team."
         client.chat_postMessage(channel=user_id, text=response_message)  
         raise 
 

@@ -2,7 +2,8 @@
 
 # Set variables
 AWS_REGION = us-east-1
-STACK_NAME = slack-bot-stack
+STACK_NAME = REPLACE_WITH_YOUR_BOT_NAME
+BOT_NAME = REPLACE_WITH_YOUR_BOT_NAME
 
 # Define default target
 .PHONY: all
@@ -14,23 +15,23 @@ build:
 	@echo "Building the Slack-Bot SAM application..."
 	cd bot && sam build
 
-# Deploy the SAM application with guided options
+# Deploy the SAM application
 .PHONY: deploy
 deploy:
 	@echo "Deploying the SAM application..."
-	cd bot && sam deploy --guided --region $(AWS_REGION) --stack-name $(STACK_NAME)
+	cd bot && sam deploy --no-confirm-changeset --no-fail-on-empty-changeset
 
 # Apply Terraform configuration
 .PHONY: apply
 apply:
 	@echo "Creating CodeBuild projects (Runners) by applying Terraform configuration..."
-	cd runners && terraform init && terraform apply -auto-approve
+	cd runners && terraform init && terraform apply -auto-approve -var="bot_name=$(BOT_NAME)"
 
 # Destroy Terraform resources and delete the SAM stack
 .PHONY: destroy
 destroy:
 	@echo "Destroying Terraform resources..."
-	cd runners && terraform destroy -auto-approve
+	cd runners && terraform destroy -auto-approve -var="bot_name=$(BOT_NAME)"
 	@echo "Deleting the SAM stack..."
 	aws cloudformation delete-stack --stack-name $(STACK_NAME) --region $(AWS_REGION)
 	@echo "Waiting for stack deletion to complete..."

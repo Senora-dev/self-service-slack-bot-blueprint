@@ -19,20 +19,31 @@ Resources:
     Type: 'AWS::SecretsManager::Secret'
     Properties:
       Name: !Sub '/${BotName}/slack-secret-token'
+      SecretString: !Sub |
+        {
+          "slack_signing_secret": "REPLACE_WITH_YOUR_SIGNING_SECRET",
+          "slack_bot_token": "REPLACE_WITH_YOUR_BOT_TOKEN"
+        }
 
   SlackBotFunction:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: SlackBotFunction
+      FunctionName: !Sub '${BotName}-SlackBotFunction'
       Handler: main.lambda_handler
       Runtime: python3.11
       CodeUri: src/slack_bot
       Environment:
         Variables:
           SLACK_SECRET_TOKEN: !Ref SlackSecretToken
-      Policies: 
+      Policies:
         - AWSSecretsManagerGetSecretValuePolicy:
             SecretArn: !Ref SlackSecretToken
+        - Statement:
+            - Effect: Allow
+              Action:
+                - secretsmanager:PutSecretValue
+                - secretsmanager:UpdateSecret
+              Resource: !Ref SlackSecretToken
         - Statement:
             - Effect: Allow
               Action: codebuild:StartBuild
@@ -52,16 +63,22 @@ Resources:
   NotifierFunction:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: NotifierFunction
+      FunctionName: !Sub '${BotName}-NotifierFunction'
       Handler: main.lambda_handler
       Runtime: python3.11
       CodeUri: src/slack_notifier
       Environment:
         Variables:
           SLACK_SECRET_TOKEN: !Ref SlackSecretToken
-      Policies: 
+      Policies:
         - AWSSecretsManagerGetSecretValuePolicy:
             SecretArn: !Ref SlackSecretToken
+        - Statement:
+            - Effect: Allow
+              Action:
+                - secretsmanager:PutSecretValue
+                - secretsmanager:UpdateSecret
+              Resource: !Ref SlackSecretToken
         - SQSPollerPolicy:
             QueueName: !Ref NotifierQueue
 
@@ -74,4 +91,4 @@ Outputs:
     Description: 'ARN of the Notifier SQS Queue'
     Value: !Ref NotifierQueue
     Export:
-      Name: NotifierQueueArn
+      Name: !Sub '${BotName}-NotifierQueueArn'

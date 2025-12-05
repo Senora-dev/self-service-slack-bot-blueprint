@@ -18,7 +18,7 @@ locals {
 resource "aws_codebuild_project" "actions" {
   for_each = local.action_data
 
-  name = "${each.value.action_name}"
+  name = each.value.action_name
 
   source {
     type     = "NO_SOURCE"
@@ -29,6 +29,11 @@ resource "aws_codebuild_project" "actions" {
     compute_type = "BUILD_GENERAL1_SMALL"
     image        = "aws/codebuild/standard:5.0"
     type         = "LINUX_CONTAINER"
+
+    environment_variable {
+      name  = "BOT_NAME"
+      value = var.bot_name
+    }
   }
 
   artifacts {

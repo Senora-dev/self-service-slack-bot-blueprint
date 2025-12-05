@@ -18,6 +18,6 @@ phases:
           --arg user_id "$DM_CHANNEL" \
           --arg message "$MESSAGE" \
           '{type: $type, user_id: $user_id, message: $message}')
-      - aws lambda invoke --function-name NotifierFunction --payload "$EVENT_PAYLOAD" --cli-binary-format raw-in-base64-out output.json || { echo "Lambda invocation failed"; cat output.json; exit 1; }
+      - aws lambda invoke --function-name ${BOT_NAME}-NotifierFunction --payload "$EVENT_PAYLOAD" --cli-binary-format raw-in-base64-out output.json || { echo "Lambda invocation failed"; cat output.json; exit 1; }
       - echo "Notifier response:"
       - cat output.json

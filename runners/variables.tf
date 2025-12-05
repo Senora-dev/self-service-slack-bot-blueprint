@@ -1,6 +1,6 @@
 variable "bot_name" {
   type    = string
-  default = "senora"
+  default = "REPLACE_WITH_YOUR_BOT_NAME"
 }
 
 variable "actions_path" {

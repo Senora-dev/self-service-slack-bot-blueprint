@@ -1,0 +1,10 @@
+version = 0.1
+
+[default]
+[default.deploy]
+[default.deploy.parameters]
+stack_name = "REPLACE_WITH_YOUR_BOT_NAME"
+region = "us-east-1"
+capabilities = "CAPABILITY_IAM"
+parameter_overrides = "BotName=REPLACE_WITH_YOUR_BOT_NAME"
+resolve_s3 = true

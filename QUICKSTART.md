@@ -180,8 +180,8 @@ aws secretsmanager put-secret-value \
 aws secretsmanager put-secret-value \
   --secret-id /my-slack-bot/slack-secret-token \
   --secret-string '{
-    "slack_signing_secret": "a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6",
-    "slack_bot_token": "xoxb-1234567890-1234567890123-abcdefghijklmnopqrstuvwx"
+    "slack_signing_secret": "<your-signing-secret-here>",
+    "slack_bot_token": "<your-bot-token-here>"
   }'
 ```
 
